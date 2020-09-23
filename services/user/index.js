@@ -3,9 +3,10 @@ const UserModel = require("./schema")
 const multer = require("multer");
 const fs = require("fs-extra");
 const path = require("path");
-const { authorize, authenticate } = require("passport");
+const authorize = require('../../middlewares/authorize')
 const upload = multer({});
-
+const { authenticate, refreshToken } = require('../../utils/jwtAuth')
+const passport = require('../../utils/oauth')
 router.get("/", authorize, async (req, res, next) => {
     try{
         const users = await UserModel.find();
