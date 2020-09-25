@@ -58,6 +58,7 @@ UserSchema.methods.toJSON = function () {
 };
 
 UserSchema.statics.findByCredentials = async (email, password) => {
+    try {
     const user = await UserModel.findOne({email});
     const isMatch = await bcrypt.compare(password, user.password);
 
@@ -67,6 +68,12 @@ UserSchema.statics.findByCredentials = async (email, password) => {
         throw err;
     }
     return user;
+    } catch (error) {
+        const err = new Error("Not Found")
+        err.httpStatusCode = 404;
+        throw err
+    }
+    
 };
 
 UserSchema.pre("save", async function(next){
