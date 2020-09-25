@@ -48,7 +48,7 @@ const generateJWT = (payload) =>
 new Promise((res, rej) =>
 jwt.sign(
     payload,
-    process.env,JWT_SECRET,
+    process.env.JWT_SECRET,
     { expiresIn: "2h" },
     (err, token) => {
         if (err) rej(err)
