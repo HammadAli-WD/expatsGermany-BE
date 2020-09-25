@@ -31,7 +31,7 @@ router.get("/me", authorize, (req, res, next) => {
 
 router.post("/Register", async (req, res, next) => {
     try {
-        const newUser = new UserModel(obj);
+        const newUser = new UserModel(req.body);
         const { _id } = await newUser.save()
         res.status(201).send(_id)
     } catch (error) {
@@ -42,6 +42,7 @@ router.post("/Register", async (req, res, next) => {
      try {
          const { email, password} = req.body;
          const user = await UserModel.findByCredentials(email, password);
+        
          const { token, refreshToken } = await authenticate(user);
          res.cookie("accessToken", token, {
             httpOnly: true,
@@ -55,6 +56,11 @@ router.post("/Register", async (req, res, next) => {
             sameSite: "none",
             secure: false,
           });
+          if(!user){
+            const err = new Error("Not Found")
+            err.httpStatusCode = 404
+            throw err
+           }
           res.status(200).send({ accessToken: token, refreshToken });
      } catch (error) {
         next(error);
@@ -70,7 +76,7 @@ router.post("/Register", async (req, res, next) => {
       await req.user.save();
       res.clearCookie("accessToken");
       res.clearCookie("refreshToken");
-      res.send("You are succesfully Sign out from LinkedIn");
+      res.send("You are succesfully Sign out from the App");
     } catch (err) {
       next(err);
     }
