@@ -6,7 +6,8 @@ const startDB = require("./config/startDB");
 const app = express();
 const authorize = require("./middlewares/authorize")
 const userRouter = require("./services/user")
-const covidRouter = require("./services/covid")
+const covidRouter = require("./services/covid");
+const newsRouter = require("./services/news")
 const passport = require('./utils/oauth');
 
 
@@ -33,6 +34,8 @@ app.use(express.json())
 app.use(passport.initialize())
 app.use("/user", userRouter)
 app.use("/covid", covidRouter)
+app.use("/news", newsRouter)
+
 
 /* if(process.env.NODE_ENV !== "production"){
     app.use(morgan("dev"))
