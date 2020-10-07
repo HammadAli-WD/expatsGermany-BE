@@ -10,7 +10,7 @@ router.get('/hackerNews', async (req, res, next) => {
       }
       const json = await response.json();
       const promises = json
-        .slice(0, 10)
+        .slice(0, 5)
         .map(id =>
           fetch(`https://${process.env.HACKER_NEWS_URL}/v0/item/${id}.json`).then(
             response => response.json()
@@ -33,8 +33,9 @@ router.get('/headlines', (req, res, next) => {
                 "x-bingapis-sdk": "true"
             }})
         .then(response =>response.json())
-        .then(data => {
-            res.send(data)
+        .then(data=> data.value)
+        .then(slice => {             
+            res.send(slice.slice(0,5))
         })
         .catch(err => {
             console.log(err);
