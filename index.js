@@ -9,12 +9,14 @@ const userRouter = require("./services/user")
 const covidRouter = require("./services/covid");
 const newsRouter = require("./services/news")
 const passport = require('./utils/oauth');
+const socketio = require("socket.io");
 
 
 //const morgan = require("morgan");
 //const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const listEndPoints = require("express-list-endpoints");
+const { userEntry } = require("./services/chat/userroom");
 const port = process.env.PORT
 
 const whitelist = ["http://localhost:3000"];
@@ -43,6 +45,41 @@ app.use("/news", newsRouter)
     app.use(helmet())
 } */
 const server = http.createServer(app);
+const io = socketio(server);
+io.on('connection', (socket) =>{
+  console.log('connected user', socket.id)
+  //Joining event
+  socket.on('join', async (options) => {
+    console.log('joined', options)
+    // add client to db
+    await userEntry({
+      roomName: options.room,
+      username: options.username,
+      id: socket.id
+    })
+    // join to the room
+    socket.join(options.room)
+
+    //send message to user entered
+    socket.emit('message', {
+      sender: "Admin",
+      text: "Welcome",
+      createdAt: new Date(),
+    })
+
+    // send message to other users but not the user entered
+    socket.broadcast.to(options.room).emit("message", {
+      sender: "Admin",
+      text: `${options.username} joined the channel`,
+      createdAt: new Date()
+    })
+
+    const list = []
+
+    // send message to every member of the room
+    io.to(options.room).emit("roomData", { room: options.room, members: list})
+  })
+})
 
 server.listen(port)
 server.on("listening", ()=> {
