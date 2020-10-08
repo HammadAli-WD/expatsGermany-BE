@@ -1,5 +1,5 @@
 const router = require("express").Router()
-const UserModel = require("./schema")
+const UserModel = require("../../Models/User")
 const multer = require("multer");
 const fs = require("fs-extra");
 const path = require("path");

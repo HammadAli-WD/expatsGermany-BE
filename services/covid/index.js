@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const fetch = require("node-fetch")
 const _ = require('lodash');
-const covidModel = require('./schema')
+const covidModel = require('../../Models/Covid')
 const url = process.env.COVIDAPI_GER_LIVEDATA 
 
 //Live data updates
