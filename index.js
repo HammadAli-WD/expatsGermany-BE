@@ -8,6 +8,8 @@ const authorize = require("./middlewares/authorize")
 const userRouter = require("./services/user")
 const covidRouter = require("./services/covid");
 const newsRouter = require("./services/news")
+const chatRouter = require("./services/chat/rooms")
+const weatherRouter = require('./services/weather')
 const passport = require('./utils/oauth');
 const socketio = require("socket.io");
 
@@ -16,7 +18,8 @@ const socketio = require("socket.io");
 //const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const listEndPoints = require("express-list-endpoints");
-const { userEntry } = require("./services/chat/userroom");
+const { userEntry, getUsersInRoom, getUser } = require("./utils/userRoom");
+const MessageModel = require("./Models/Message");
 const port = process.env.PORT
 
 const whitelist = ["http://localhost:3000"];
@@ -37,7 +40,8 @@ app.use(passport.initialize())
 app.use("/user", userRouter)
 app.use("/covid", covidRouter)
 app.use("/news", newsRouter)
-
+app.use("/weather", weatherRouter)
+app.use("/chatRooms", chatRouter)
 
 /* if(process.env.NODE_ENV !== "production"){
     app.use(morgan("dev"))
@@ -74,10 +78,34 @@ io.on('connection', (socket) =>{
       createdAt: new Date()
     })
 
-    const list = []
+    const list = await getUsersInRoom(options.room)
 
     // send message to every member of the room
     io.to(options.room).emit("roomData", { room: options.room, members: list})
+  })
+  socket.on("leave", ()=>{})
+
+  //send messages to all members
+
+  socket.on("sendMessage", async ({ room, text, id }) => {
+    const user = await getUser( room, socket.id)
+    //save the message in collection
+
+    const newMessage = new MessageModel({ 
+      sender: user.username,
+      text,
+      room 
+    })
+
+    await newMessage.save()
+    console.log(newMessage)
+    //search for sender username
+    const message = {
+      sender: user.username,
+      text,
+      createdAt: new Date()
+    }
+    io.to(room).emit("message", message)
   })
 })
 
