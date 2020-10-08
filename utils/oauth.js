@@ -1,7 +1,7 @@
 const passport = require("passport");
 const { Strategy } = require("passport-facebook");
 const { authenticate } = require("./jwtAuth");
-const UserModel = require("../services/user/schema");
+const UserModel = require("../Models/User");
 const LinkedInStrategy = require("passport-linkedin-oauth2").Strategy;
 
 passport.use(

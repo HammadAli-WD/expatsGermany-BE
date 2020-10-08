@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken")
-const User = require("../services/user/schema");
+const User = require("../Models/User");
 
 const refreshToken = async (oldRefreshToken) => {
     const decoded = await verifyRefreshToken(oldRefreshToken)
