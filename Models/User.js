@@ -24,7 +24,7 @@ const UserSchema = new Schema(
             type: String,
             required: true,
             lowercase: true,
-            unique: false,
+            unique: true,
             validate: {
               validator: async (value) => {
                 if (!v.isEmail(value)) {
@@ -42,7 +42,11 @@ const UserSchema = new Schema(
         },
         ],
         facebookId: String,
-        LinkedInId: String
+        LinkedInId: String,
+        role: {
+            type: String,
+            enum: ["admin"],            
+        }
     },
     { timestamps: true }
 );
