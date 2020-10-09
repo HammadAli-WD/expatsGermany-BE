@@ -1,13 +1,12 @@
 const router = require("express").Router();
 const { createChatRoom } = require("../../utils/userRoom")
-const authorize = require('../../middlewares/authorize')
+const {authorize, adminOnly} = require('../../middlewares/authorize')
 
-router.post('/room', authorize, async (req, res, next) => {    
+router.post('/room', authorize, adminOnly, async (req, res, next) => {    
     try {
        await createChatRoom(req, res)
-    } catch (err) {
-        next(err)
-      console.error(err);
+    } catch (error) {      
+      console.log(error);
     }
    })
 
