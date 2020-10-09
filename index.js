@@ -4,7 +4,6 @@ const express = require ("express");
 const cors = require("cors")
 const startDB = require("./config/startDB");
 const app = express();
-const authorize = require("./middlewares/authorize")
 const userRouter = require("./services/user")
 const covidRouter = require("./services/covid");
 const newsRouter = require("./services/news")
@@ -12,7 +11,12 @@ const chatRouter = require("./services/chat/rooms")
 const weatherRouter = require('./services/weather')
 const passport = require('./utils/oauth');
 const socketio = require("socket.io");
-
+const {
+  catchAllHandler, 
+  forbiddenHandler,
+  unauthorizedHandler,
+  notFoundHandler
+} = require("./middlewares/errorHandler")
 
 //const morgan = require("morgan");
 //const helmet = require("helmet");
@@ -42,6 +46,12 @@ app.use("/covid", covidRouter)
 app.use("/news", newsRouter)
 app.use("/weather", weatherRouter)
 app.use("/chatRooms", chatRouter)
+
+// Error handlers
+app.use(notFoundHandler)
+app.use(unauthorizedHandler)
+app.use(forbiddenHandler)
+//app.use(catchAllHandler)
 
 /* if(process.env.NODE_ENV !== "production"){
     app.use(morgan("dev"))
