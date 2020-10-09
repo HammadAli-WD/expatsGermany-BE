@@ -25,6 +25,16 @@ const authorize = async (req, res, next) => {
         console.log(error);
         next(error)
     }
-};
+}
 
-module.exports = authorize
+const adminOnly = async (req, res, next) => {
+    if (req.user && req.user.role === "admin") 
+    next()
+    else {
+        const err = new Error("Only Admins")
+        err.httpStatusCode = 403
+        next(err)
+    }
+}
+
+module.exports = { authorize, adminOnly }
