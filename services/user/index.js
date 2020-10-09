@@ -3,7 +3,7 @@ const UserModel = require("../../Models/User")
 const multer = require("multer");
 const fs = require("fs-extra");
 const path = require("path");
-const authorize = require('../../middlewares/authorize')
+const { authorize } = require('../../middlewares/authorize')
 const upload = multer({});
 const { authenticate, refreshToken } = require('../../utils/jwtAuth')
 const passport = require('../../utils/oauth')
@@ -17,7 +17,8 @@ router.get("/", authorize, async (req, res, next) => {
             res.status(200).send(users);
         }          
     } catch (error) {
-        next()
+      next(error)
+      console.log(error);
     }
 })
 
@@ -25,7 +26,8 @@ router.get("/me", authorize, (req, res, next) => {
     try {
         res.send(req.user)
     } catch (error) {
-        next(error)
+      next(error)
+      console.log(error);
     }
 })
 
@@ -35,7 +37,8 @@ router.post("/Register", async (req, res, next) => {
         const { _id } = await newUser.save()
         res.status(201).send(_id)
     } catch (error) {
-        next(error);
+      next(error)
+      console.log(error);
     }
 })
  router.post("/signIn", async(req, res, next)=>{
@@ -63,8 +66,7 @@ router.post("/Register", async (req, res, next) => {
            }
           res.status(200).send({ accessToken: token, refreshToken });
      } catch (error) {
-        next(error);
-
+      next(error)
      }
  })
 
@@ -77,8 +79,9 @@ router.post("/Register", async (req, res, next) => {
       res.clearCookie("accessToken");
       res.clearCookie("refreshToken");
       res.send("You are succesfully Sign out from the App");
-    } catch (err) {
-      next(err);
+    } catch (error) {
+      next(error)
+      console.log(error);
     }
   });
   
@@ -110,7 +113,8 @@ router.post("/:id/upload", upload.single("image"), async (req, res, next) => {
         console.log(update)
       
     } catch (error) {
-        next(error)
+      next(error)
+      console.log(error);
     }
     res.send("Ok");
 
@@ -136,10 +140,8 @@ router.post("/refreshToken", async (req, res, next) => {
       });
       res.send(tokens);
     } catch (error) {
-      console.log(error);
-      const err = new Error(error);
-      err.httpStatusCode = 403;
-      next(err);
+      console.log(error);      
+      next(error);
     }
   }
 });
@@ -156,7 +158,9 @@ router.put("/", authorize, async (req, res, next) => {
       next(error);
     }
   } catch (error) {
-    next(error);
+    
+    next(error)
+    console.log(error);
   }
 });
 
@@ -168,11 +172,11 @@ router.delete("/", async (req, res, next) => {
       res.status(200).send("Delete!");
     } else {
       const error = new Error(`Profile with id ${req.params.id} not found!`);
-      error.httpStatusCode = 404;
       next(error);
     }
   } catch (error) {
-    next(error);
+    next(error)
+    console.log(error);
   }
 });
 router.get(
@@ -196,8 +200,8 @@ router.get(
       })
       res.status(200).redirect("http://localhost:3000/feed")
     } catch (error) {
-      console.log(error)
       next(error)
+      console.log(error);
     
     }
   }
@@ -226,6 +230,7 @@ router.get(
     } catch (error) {
       console.log(error)
       next(error)
+      console.log(error);
     
     }
   }

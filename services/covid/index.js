@@ -12,7 +12,8 @@ router.get('/globalCases', (req, res, next) =>{
          .then(data => 
             res.send(data.Global))
     } catch (error) {
-        
+      next(error)
+      console.log(error);
  }
 })
 
@@ -29,7 +30,8 @@ router.get('/lastData', (req, res, next) => {
         console.log(err)
     })
  } catch (error) {
-    next(error)
+   next(error)
+   console.log(error);
  }
     
 })
@@ -54,7 +56,8 @@ router.get('/casesIncreased', (req, res, next) => {
         console.log(err)
     })
  } catch (error) {
-    next(error)
+   next(error)
+   console.log(error);
 }
     
 })

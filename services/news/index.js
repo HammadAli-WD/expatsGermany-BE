@@ -18,8 +18,9 @@ router.get('/hackerNews', async (req, res, next) => {
         );
       const result = await Promise.all(promises);
       res.send(result);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      next(error)
+      console.log(error);
     }
    })
 
@@ -41,7 +42,8 @@ router.get('/headlines', (req, res, next) => {
             console.log(err);
         });
        } catch (error) {
-           
+        next(error)
+        console.log(error);
        }
    })
 

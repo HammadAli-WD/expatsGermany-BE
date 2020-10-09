@@ -1,16 +1,19 @@
 const RoomModel = require('../Models/ChatRooms');
 
  const createChatRoom = async (req, res) => {
-    const { name } = req.body
-    const hasChatRoom = await RoomModel.findOne({ name })
-     if (hasChatRoom) throw "Chatroom exists"
-     const chatRoom = new RoomModel({
-         name
-     })
-
-     await chatRoom.save()
-
-     res.send(chatRoom.name)
+     try {
+        const { name } = req.body
+        const hasChatRoom = await RoomModel.findOne({ name })
+         if (hasChatRoom) res.send ("Chat Room Already Exists") 
+         const chatRoom = new RoomModel({
+             name
+         })    
+         await chatRoom.save()    
+         res.send(chatRoom.name)
+     } catch (error) {        
+         console.log(error)
+     }     
+    
 } 
  
 

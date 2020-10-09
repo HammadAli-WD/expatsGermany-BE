@@ -21,7 +21,9 @@ try {
         console.log(err)
     })
 } catch (error) {
+    error.httpStatusCode = 500
     next(error)
+    console.log(error);
 }
     
 })
@@ -59,7 +61,9 @@ router.get('/forecast', async (req, res, next) => {
             console.log(err)
         })
     } catch (error) {
+        error.httpStatusCode = 500
         next(error)
+        console.log(error);
     }
         
     })
