@@ -6,7 +6,7 @@ const MessageSchema = new Schema ({
     text: String,
     room: {
         type: String,       
-        $ref: "ChatRooms"
+        ref: "ChatRooms"
     }
 })
 

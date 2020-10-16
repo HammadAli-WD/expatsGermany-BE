@@ -9,6 +9,8 @@ const RoomSchema = new Schema({
         id: String
     },
 ],
-})
+},
+{ timestamps: true }
+)
 
 module.exports = mongoose.model("ChatRooms", RoomSchema)

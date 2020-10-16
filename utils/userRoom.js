@@ -17,30 +17,38 @@ const RoomModel = require('../Models/ChatRooms');
 } 
  
 
-const userEntry = async ({ roomName, username, id }) => {
+const userEntry = async ({ room, username, id }) => {
+    /* username = username.trim().toLowerCase();
+    room = room.trim().toLowerCase(); */
+    if (!username || !room) {
+        return {
+          error: "Username and room are required!",
+        }
+      }
     try {
         // check if user already there
         const user = await RoomModel.findOne({
-            name: roomName,
+            name: room,
             "members.username": username,
         })
         console.log(user)
         // changing user id if already exists
         if (user) {
             await RoomModel.findOneAndUpdate(
-                { name: roomName, "members.username": username},
+                { name: room, "members.username": username},
                 { "members.$.id": id}
             )
         } else {
             // Otherwise we are gonna add him to the members array
             await RoomModel.findOneAndUpdate(
-                { name: roomName },
+                { name: room },
                 { $addToSet: { members: {username, id}}}
             )
         }
-        return { username, roomName}
+        return { username, room}
     } catch (error) {
-        console.log(error)       
+        console.log(error)
+        return error       
     }
 }
 const getUser = async (roomName, id) => {
@@ -58,4 +66,24 @@ const getUsersInRoom = async (roomName) => {
     const room = await RoomModel.findOne({ name: roomName })
     return room.members
 }
-module.exports = { userEntry, getUsersInRoom, getUser, createChatRoom  }
+
+const removeUser = async (id, room) => {
+    try {
+      const foundRoom = await RoomModel.findOne({ name: room })
+  
+      const username = foundRoom.members.find((member) => member.id === id)
+  
+      await RoomModel.findOneAndUpdate(
+        { name: room },
+        {
+          $pull: { members: { id: id } },
+        }
+      )
+  
+      return username
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+module.exports = { userEntry, getUsersInRoom, getUser, createChatRoom, removeUser  }

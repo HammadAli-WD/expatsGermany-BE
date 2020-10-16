@@ -9,5 +9,9 @@ router.post('/room', authorize, adminOnly, async (req, res, next) => {
       console.log(error);
     }
    })
+/* 
+router.get('/:room', (req, res) => {
+  res.render('room', { roomId: req.params.room })
+}) */
 
-   module.exports = router
+module.exports = router
