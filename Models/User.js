@@ -1,7 +1,7 @@
 const { Schema } = require("mongoose");
 const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
-const v = require("validator");
+const validation = require("validator");
 
 const UserSchema = new Schema(
     {
@@ -13,6 +13,18 @@ const UserSchema = new Schema(
             type: String,
             required: true
         },
+        username: {
+            type: String,
+            required: true,
+            validate: {
+              validator: async (value) => {
+                const checkUsername = await UserModel.findOne({ username: value });
+                if (checkUsername) {
+                  throw new Error('Username already exists!');
+                }
+              },
+            },
+          },
         password: {
             type: String,
             required: true,            
@@ -23,12 +35,15 @@ const UserSchema = new Schema(
         email: {
             type: String,
             required: true,
-            lowercase: true,
-            unique: true,
             validate: {
               validator: async (value) => {
-                if (!v.isEmail(value)) {
-                  throw new Error("Email pattern is invalid");
+                if (!validation.isEmail(value)) {
+                  throw new Error('Email is invalid');
+                } else {
+                  const checkEmail = await UserModel.findOne({ email: value });
+                  if (checkEmail) {
+                    throw new Error('Email already existsts');
+                  }
                 }
               },
             },
@@ -61,9 +76,11 @@ UserSchema.methods.toJSON = function () {
     return userObject
 };
 
-UserSchema.statics.findByCredentials = async (email, password) => {
+UserSchema.statics.findByCredentials = async (loginCredential, password) => {
     try {
-    const user = await UserModel.findOne({email});
+    const user = await UserModel.findOne({
+        $or: [{ username: loginCredential }, { email: loginCredential }],
+    });
     const isMatch = await bcrypt.compare(password, user.password);
 
     if(!isMatch){
