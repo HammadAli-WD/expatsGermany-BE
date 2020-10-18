@@ -7,6 +7,15 @@ const { authorize } = require('../../middlewares/authorize')
 const upload = multer({});
 const { authenticate, refreshToken } = require('../../utils/jwtAuth')
 const passport = require('../../utils/oauth')
+const cloudinary = require('cloudinary').v2
+const streamifier = require('streamifier')
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
 router.get("/", authorize, async (req, res, next) => {
     try{
         const users = await UserModel.find();
@@ -85,39 +94,39 @@ router.post("/Register", async (req, res, next) => {
     }
   });
   
-router.post("/:id/upload", upload.single("image"), async (req, res, next) => {
+router.post("/:username/upload", upload.single("profile"), async (req, res, next) => {
     try {
-        const imagesPath = path.join(__dirname, "./images");
-        await fs.writeFile(
-          path.join(
-            imagesPath,
-            req.params.id + "." + req.file.originalname.split(".").pop()  // pop is for type of image like .jpg etc
-          ),
-          req.file.buffer
-        );
-    
-        //
-        const obj = {
-          image: fs.readFileSync(
-            path.join(
-              __dirname +
-                "/images/" +
-                req.params.id +
-                "." +
-                req.file.originalname.split(".").pop()
-            )
-          ),
-        };
-        //
-        const update = await UserModel.findByIdAndUpdate(req.params.id, obj);
-        console.log(update)
+       if (req.file) {
+         const imageUsername = req.params.username
+         const stream = cloudinary.uploader.upload_stream(
+           {
+             folder: 'profiles',
+             public_id: imageUsername ,
+           },
+           async (err, result) => {
+             if (!err) {
+               
+               const post = new UserModel({          
+                image: req.body.image
+            });
+               
+               await post.save({ validateBeforeSave: false })
+               res.status(200).send('Image Uploaded');
+             }
+           }
+         );
+           streamifier.createReadStream(req.file.buffer).pipe(stream)
+       } else {
+         const err = new Error();
+         err.httpStatusCode = 400;
+         err.message = 'Image file missing'
+         next(err)
+       }
       
     } catch (error) {
       next(error)
       console.log(error);
     }
-    res.send("Ok");
-
 })
 
 router.post("/refreshToken", async (req, res, next) => {
@@ -198,7 +207,7 @@ router.get(
         httpOnly: true,
         path: ["/user/refreshToken", "/user/signOut"],
       })
-      res.status(200).redirect("http://localhost:3000/feed")
+      res.status(200).redirect("http://localhost:3000/join")
     } catch (error) {
       next(error)
       console.log(error);
@@ -226,7 +235,7 @@ router.get(
         //httpOnly: true,
         path: ["/user/refreshToken", "/user/signOut"],
       })
-      res.status(200).redirect("http://localhost:3000/feed")
+      res.status(200).redirect("http://localhost:3000/join")
     } catch (error) {
       console.log(error)
       next(error)
