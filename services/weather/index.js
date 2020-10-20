@@ -55,11 +55,7 @@ router.get('/forecast', async (req, res, next) => {
         ])
 
         res.send(array)
-
-
-        .catch(err =>{
-            console.log(err)
-        })
+        
     } catch (error) {
         error.httpStatusCode = 500
         next(error)
