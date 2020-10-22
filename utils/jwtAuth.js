@@ -34,8 +34,7 @@ const authenticate = async (user) => {
         const newRefreshToken = await generateRefreshJWT({ _id : user._id })
 
         const newUser = await User.findById(user._id)
-        newUser.refreshTokens.push({ token: newRefreshToken })
-        await newUser.save()
+        await newUser.refreshTokens.push({ token: newRefreshToken })
         return { token:newAccessToken, refreshToken: newRefreshToken }
     } catch (error) {
         throw new Error(error)
