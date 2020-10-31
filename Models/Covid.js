@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 
 const covidSchema = new Schema (
     {
-        newCases: {
+        caseFatalityRate: {
             type: String
         }
     },
