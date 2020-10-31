@@ -18,7 +18,8 @@ passport.use(
         const newUser = {
           facebookId: id,
           name: first_name,
-          surname: last_name,        
+          surname: last_name,
+          username: last_name,        
           email: email,
           password: id,
           //role: "user",        
@@ -63,7 +64,7 @@ passport.use(
           name: profile.name.givenName,
           surname: profile.name.familyName,
           email: profile.emails[0].value,
-          username: profile.id,
+          username: profile.name.familyName,
           linkedInImage: profile.photos[0].value,
           //role: "user",
           password: profile.id,
