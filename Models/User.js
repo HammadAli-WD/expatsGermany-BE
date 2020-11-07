@@ -16,14 +16,14 @@ const UserSchema = new Schema(
         username: {
             type: String,
             required: true,
-            validate: {
+            /* validate: {
               validator: async (value) => {
                 const checkUsername = await UserModel.findOne({ username: value });
                 if (checkUsername) {
                   throw new Error('Username already exists!');
                 }
               },
-            },
+            }, */
           },
         password: {
             type: String,
