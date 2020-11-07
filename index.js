@@ -69,7 +69,10 @@ io.on('connection', (socket) =>{
     const { username, room } = await userEntry({
       id: socket.id,
       ...options,
+     
     })
+    //console.log('123456', { username, room })
+
 
     // join to the room
     socket.join(room)
