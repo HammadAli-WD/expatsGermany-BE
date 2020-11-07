@@ -1,15 +1,17 @@
-const RoomModel = require('../Models/ChatRooms');
+const ChatRooms = require('../Models/ChatRooms');
 
  const createChatRoom = async (req, res) => {
      try {
-        const { name } = req.body
-        const hasChatRoom = await RoomModel.findOne({ name })
+        const { name, image, description } = req.body
+        const hasChatRoom = await ChatRooms.findOne({ name })
          if (hasChatRoom) res.send ("Chat Room Already Exists") 
-         const chatRoom = new RoomModel({
-             name
+         const chatRoom = new ChatRooms({
+             name,
+             image,
+             description
          })    
          await chatRoom.save()    
-         res.send(chatRoom.name)
+         res.send(chatRoom)
      } catch (error) {        
          console.log(error)
      }     
@@ -20,6 +22,9 @@ const RoomModel = require('../Models/ChatRooms');
 const userEntry = async ({ room, username, id }) => {
     /* username = username.trim().toLowerCase();
     room = room.trim().toLowerCase(); */
+    console.log('----------------------------, ', id)
+    console.log('----------------------------, ', username)
+    console.log('------------------------------ ', room)
     if (!username || !room) {
         return {
           error: "Username and room are required!",
@@ -27,25 +32,28 @@ const userEntry = async ({ room, username, id }) => {
       }
     try {
         // check if user already there
-        const user = await RoomModel.findOne({
+        const user = await ChatRooms.find({
             name: room,
             "members.username": username,
         })
-        console.log(user)
+        //console.log('********************** ', user)
         // changing user id if already exists
         if (user) {
-            await RoomModel.findOneAndUpdate(
+            await ChatRooms.findOneAndUpdate(
                 { name: room, "members.username": username},
                 { "members.$.id": id}
             )
         } else {
             // Otherwise we are gonna add him to the members array
-            await RoomModel.findOneAndUpdate(
+            const user = await ChatRooms.findOneAndUpdate(
                 { name: room },
-                { $addToSet: { members: {username, id}}}
-            )
+                {
+                  $addToSet: { members: { username, id } },
+                }
+              )
         }
-        return { username, room}
+        return { username, room }
+        //return room
     } catch (error) {
         console.log(error)
         return error       
@@ -53,7 +61,7 @@ const userEntry = async ({ room, username, id }) => {
 }
 const getUser = async (roomName, id) => {
     try {
-        const room = await RoomModel.findOne({ name: roomName })
+        const room = await ChatRooms.findOne({ name: roomName })
         const user = room.members.find((member)=> member.id === id)
         return user
     } catch (error) {
@@ -63,17 +71,23 @@ const getUser = async (roomName, id) => {
 }
 
 const getUsersInRoom = async (roomName) => {
-    const room = await RoomModel.findOne({ name: roomName })
-    return room.members
+    try {
+        const room = await ChatRooms.findOne({ name: roomName })
+        console.log("roomName", roomName)
+        return room.members
+    } catch (error) {
+        console.log(error)
+    }
+    
 }
 
 const removeUser = async (id, room) => {
     try {
-      const foundRoom = await RoomModel.findOne({ name: room })
+      const foundRoom = await ChatRooms.findOne({ name: room })
   
       const username = foundRoom.members.find((member) => member.id === id)
   
-      await RoomModel.findOneAndUpdate(
+      await ChatRooms.findOneAndUpdate(
         { name: room },
         {
           $pull: { members: { id: id } },
