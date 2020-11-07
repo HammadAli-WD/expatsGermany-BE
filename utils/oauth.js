@@ -10,7 +10,7 @@ passport.use(
         clientID: process.env.FACEBOOK_APP_ID,
         clientSecret: process.env.FACEBOOK_APP_SECRET,
         callbackURL: `http://localhost:3005/user/auth/fbSignIn/redirect`,
-        profileFields: ['id', 'email', 'gender', "first_name", "last_name"]
+        profileFields: ['id', 'email', 'gender', "first_name", "last_name", "picture.type(large)"]
   
       },
       async (accessToken, refreshToken, profile, done) => {
@@ -22,6 +22,7 @@ passport.use(
           username: last_name,        
           email: email,
           password: id,
+          image:`https://graph.facebook.com/${profile.id}/picture?width=200&height=200&access_token=${accessToken}`,
           //role: "user",        
           refreshTokens: [],
         }
@@ -65,7 +66,7 @@ passport.use(
           surname: profile.name.familyName,
           email: profile.emails[0].value,
           username: profile.name.familyName,
-          linkedInImage: profile.photos[0].value,
+          image: profile.photos[0].value,
           //role: "user",
           password: profile.id,
           refreshTokens: [],
