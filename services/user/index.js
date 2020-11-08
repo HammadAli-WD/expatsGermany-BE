@@ -17,116 +17,116 @@ cloudinary.config({
 });
 
 router.get("/", authorize, async (req, res, next) => {
-    try{
-        const users = await UserModel.find();
-        if (users.length < 1) {            
-            res.status(200).send("User List is Empty")            
-        } else {
-            console.log(users);
-            res.status(200).send(users);
-        }          
-    } catch (error) {
-      next(error)
-      console.log(error);
+  try {
+    const users = await UserModel.find();
+    if (users.length < 1) {
+      res.status(200).send("User List is Empty")
+    } else {
+      console.log(users);
+      res.status(200).send(users);
     }
+  } catch (error) {
+    next(error)
+    console.log(error);
+  }
 })
 
 router.get("/me", authorize, (req, res, next) => {
-    try {
-        res.send(req.user)
-    } catch (error) {
-      next(error)
-      console.log(error);
-    }
+  try {
+    res.send(req.user)
+  } catch (error) {
+    next(error)
+    console.log(error);
+  }
 })
 
 router.post("/Register", async (req, res, next) => {
-    try {
-        const newUser = new UserModel(req.body);
-        const { _id } = await newUser.save()
-        res.status(201).send(_id)
-    } catch (error) {
-      next(error)
-      console.log(error);
-    }
+  try {
+    const newUser = new UserModel(req.body);
+    const { _id } = await newUser.save()
+    res.status(201).send(_id)
+  } catch (error) {
+    next(error)
+    console.log(error);
+  }
 })
- router.post("/signIn", async(req, res, next)=>{
-     try {
-         const { email, password} = req.body;
-         const user = await UserModel.findByCredentials(email, password);
-        
-         const { token, refreshToken } = await authenticate(user);
-         res.cookie("accessToken", token, {
-            httpOnly: true,
-            path: "/",
-            sameSite: "none",
-            secure: false,
-         })
-         res.cookie("refreshToken", refreshToken, {
-            httpOnly: true,
-            path: "/",
-            sameSite: "none",
-            secure: false,
-          });
-          if(!user){
-            const err = new Error("Not Found")
-            err.httpStatusCode = 404
-            throw err
-           }
-          res.status(200).send({ accessToken: token, refreshToken });
-     } catch (error) {
-      next(error)
-     }
- })
+router.post("/signIn", async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    const user = await UserModel.findByCredentials(email, password);
 
- router.post("/signOut", authorize, async (req, res, next) => {
-    try {
-      req.user.refreshTokens = req.user.refreshTokens.filter(
-        (t) => t.token !== req.body.refreshToken
-      );
-      await req.user.save();
-      res.clearCookie("accessToken");
-      res.clearCookie("refreshToken");
-      res.send("You are succesfully Sign out from the App");
-    } catch (error) {
-      next(error)
-      console.log(error);
+    const { token, refreshToken } = await authenticate(user);
+    res.cookie("accessToken", token, {
+      httpOnly: true,
+      path: "/",
+      sameSite: "none",
+      secure: false,
+    })
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      path: "/",
+      sameSite: "none",
+      secure: false,
+    });
+    if (!user) {
+      const err = new Error("Not Found")
+      err.httpStatusCode = 404
+      throw err
     }
-  });
-  
+    res.status(200).send({ accessToken: token, refreshToken });
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.post("/signOut", authorize, async (req, res, next) => {
+  try {
+    req.user.refreshTokens = req.user.refreshTokens.filter(
+      (t) => t.token !== req.body.refreshToken
+    );
+    await req.user.save();
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+    res.send("You are succesfully Sign out from the App");
+  } catch (error) {
+    next(error)
+    console.log(error);
+  }
+});
+
 router.post("/:username/upload", upload.single("profile"), async (req, res, next) => {
-    try {
-       if (req.file) {
-         const imageUsername = req.params.username
-         const stream = cloudinary.uploader.upload_stream(
-           {
-             folder: 'profiles',
-             public_id: imageUsername ,
-           },
-           async (err, result) => {
-             if (!err) {
-               
-               const post = new UserModel({          
-                image: req.body.image
+  try {
+    if (req.file) {
+      const imageUsername = req.params.username
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: 'profiles',
+          public_id: imageUsername,
+        },
+        async (err, result) => {
+          if (!err) {
+
+            const post = new UserModel({
+              image: req.body.image
             });
-               
-               await post.save({ validateBeforeSave: false })
-               res.status(200).send('Image Uploaded');
-             }
-           }
-         );
-           streamifier.createReadStream(req.file.buffer).pipe(stream)
-       } else {
-         const err = new Error();
-         err.httpStatusCode = 400;
-         err.message = 'Image file missing'
-         next(err)
-       }
-      
-    } catch (error) {
-      next(error)
-      console.log(error);
+
+            await post.save({ validateBeforeSave: false })
+            res.status(200).send('Image Uploaded');
+          }
+        }
+      );
+      streamifier.createReadStream(req.file.buffer).pipe(stream)
+    } else {
+      const err = new Error();
+      err.httpStatusCode = 400;
+      err.message = 'Image file missing'
+      next(err)
     }
+
+  } catch (error) {
+    next(error)
+    console.log(error);
+  }
 })
 
 router.post("/refreshToken", async (req, res, next) => {
@@ -149,7 +149,7 @@ router.post("/refreshToken", async (req, res, next) => {
       });
       res.send(tokens);
     } catch (error) {
-      console.log(error);      
+      console.log(error);
       next(error);
     }
   }
@@ -167,7 +167,7 @@ router.put("/", authorize, async (req, res, next) => {
       next(error);
     }
   } catch (error) {
-    
+
     next(error)
     console.log(error);
   }
@@ -207,11 +207,11 @@ router.get(
         httpOnly: true,
         path: ["/user/refreshToken", "/user/signOut"],
       })
-      res.status(200).redirect("http://localhost:3000/join")
+      res.status(200).redirect("http://localhost:3000/rooms")
     } catch (error) {
       next(error)
       console.log(error);
-    
+
     }
   }
 )
@@ -235,12 +235,12 @@ router.get(
         //httpOnly: true,
         path: ["/user/refreshToken", "/user/signOut"],
       })
-      res.status(200).redirect("http://localhost:3000/join")
+      res.status(200).redirect("http://localhost:3000/rooms")
     } catch (error) {
       console.log(error)
       next(error)
       console.log(error);
-    
+
     }
   }
 )
