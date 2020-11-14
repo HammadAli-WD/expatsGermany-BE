@@ -55,9 +55,18 @@ router.post("/signIn", async (req, res, next) => {
     const { email, password } = req.body;
     const user = await UserModel.findByCredentials(email, password);
 
+
     const { token, refreshToken } = await authenticate(user);
-    res.cookie("accessToken", token)
-    res.cookie("refreshToken", refreshToken);
+    res.cookie("accessToken", token, {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+    })
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+    });
     if (!user) {
       const err = new Error("Not Found")
       err.httpStatusCode = 404
