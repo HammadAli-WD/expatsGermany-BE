@@ -9,11 +9,10 @@ passport.use(
     {
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
-      callbackURL: `https://apiexpatsingermany.herokuapp.com/user/auth/fbSignIn/redirect`,
+      callbackURL: `http://${process.env.HOST}/user/auth/fbSignIn/redirect`,
       profileFields: ['id', 'email', 'gender', "first_name", "last_name", "picture.type(large)"]
 
     },
-
     async (accessToken, refreshToken, profile, done) => {
       const { email, first_name, last_name, id } = profile._json;
       const newUser = {
@@ -55,7 +54,7 @@ passport.use(
     {
       clientID: process.env.LINKEDIN_APP_ID,
       clientSecret: process.env.LINKEDIN_APP_SECRET,
-      callbackURL: `https://apiexpatsingermany.herokuapp.com/user/auth/LinkedIn/redirect`,
+      callbackURL: `http://${process.env.HOST}/user/auth/LinkedIn/redirect`,
       scope: ["r_liteprofile", "r_emailaddress"],
 
     },
