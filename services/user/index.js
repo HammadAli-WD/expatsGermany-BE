@@ -198,14 +198,14 @@ router.get(
   passport.authenticate("facebook"),
   async (req, res, next) => {
     try {
-      console.log(req.user)
-      const { token, refreshToken } = req.user
-      res.cookie("accessToken", token, {
+      console.log('Tokensssss', req.user)
+      const { token, refreshToken } = await req.user
+      await res.cookie("accessToken", token, {
         httpOnly: true,
         sameSite: 'none',
         secure: true,
       });
-      res.cookie("refreshToken", refreshToken, {
+      await res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         sameSite: 'none',
         secure: true,
@@ -229,7 +229,7 @@ router.get(
   async (req, res, next) => {
     try {
       console.log(req.user)
-      const { token, refreshToken } = req.user
+      const { token, refreshToken } = await req.user
       res.cookie("accessToken", token, {
         httpOnly: true,
         sameSite: 'none',
