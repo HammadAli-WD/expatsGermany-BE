@@ -53,11 +53,11 @@ app.use(unauthorizedHandler)
 app.use(forbiddenHandler)
 //app.use(catchAllHandler)
 
-if (process.env.NODE_ENV !== "production") {
+/* if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev"))
 } else {
   app.use(helmet())
-}
+} */
 const server = http.createServer(app);
 const io = socketio(server);
 io.on('connection', (socket) => {
