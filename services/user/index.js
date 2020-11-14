@@ -140,13 +140,13 @@ router.post("/refreshToken", async (req, res, next) => {
       const tokens = await refreshToken(oldRefreshToken);
 
       res.cookie("accessToken", tokens.token, {
-        httpOnly: true,
+        //httpOnly: true,
         path: "/",
         sameSite: "none",
         secure: false,
       });
       res.cookie("refreshToken", tokens.refreshToken, {
-        httpOnly: true,
+        //httpOnly: true,
 
         sameSite: "none",
         secure: false,
@@ -205,11 +205,11 @@ router.get(
       console.log(req.user)
       const { token, refreshToken } = req.user.tokens
       res.cookie("accessToken", token, {
-        httpOnly: true,
+        //httpOnly: true,
         path: "/"
       })
       res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
+        // httpOnly: true,
         path: ["/user/refreshToken", "/user/signOut"],
       })
       res.status(200).redirect(process.env.REDIRECT_CHATROOM)
