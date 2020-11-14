@@ -9,7 +9,7 @@ passport.use(
     {
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
-      callbackURL: `http://${process.env.HOST}/user/auth/fbSignIn/redirect`,
+      callbackURL: `https://${process.env.HOST}/user/auth/fbSignIn/redirect`,
       profileFields: ['id', 'email', 'gender', "first_name", "last_name", "picture.type(large)"]
 
     },
@@ -54,7 +54,7 @@ passport.use(
     {
       clientID: process.env.LINKEDIN_APP_ID,
       clientSecret: process.env.LINKEDIN_APP_SECRET,
-      callbackURL: `http://${process.env.HOST}/user/auth/LinkedIn/redirect`,
+      callbackURL: `https://${process.env.HOST}/user/auth/LinkedIn/redirect`,
       scope: ["r_liteprofile", "r_emailaddress"],
 
     },
