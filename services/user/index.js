@@ -201,13 +201,15 @@ router.get(
       console.log(req.user)
       const { token, refreshToken } = req.user.tokens
       res.cookie("accessToken", token, {
-        //httpOnly: true,
-        path: "/"
-      })
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true,
+      });
       res.cookie("refreshToken", refreshToken, {
-        // httpOnly: true,
-        path: ["/user/refreshToken", "/user/signOut"],
-      })
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true,
+      });
       res.status(200).redirect(process.env.REDIRECT_CHATROOM)
     } catch (error) {
       next(error)
@@ -229,13 +231,15 @@ router.get(
       console.log(req.user)
       const { token, refreshToken } = req.user.tokens
       res.cookie("accessToken", token, {
-        //httpOnly: true,
-        path: "/"
-      })
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true,
+      });
       res.cookie("refreshToken", refreshToken, {
-        //httpOnly: true,
-        path: ["/user/refreshToken", "/user/signOut"],
-      })
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true,
+      });
       res.status(200).redirect(process.env.REDIRECT_CHATROOM)
     } catch (error) {
       console.log(error)
