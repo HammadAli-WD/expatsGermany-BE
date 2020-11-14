@@ -18,8 +18,8 @@ const {
   notFoundHandler
 } = require("./middlewares/errorHandler")
 
-//const morgan = require("morgan");
-//const helmet = require("helmet");
+const morgan = require("morgan");
+const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const listEndPoints = require("express-list-endpoints");
 const { userEntry, getUsersInRoom, getUser, removeUser } = require("./utils/userRoom");
@@ -53,11 +53,11 @@ app.use(unauthorizedHandler)
 app.use(forbiddenHandler)
 //app.use(catchAllHandler)
 
-/* if(process.env.NODE_ENV !== "production"){
-    app.use(morgan("dev"))
+if (process.env.NODE_ENV !== "production") {
+  app.use(morgan("dev"))
 } else {
-    app.use(helmet())
-} */
+  app.use(helmet())
+}
 const server = http.createServer(app);
 const io = socketio(server);
 io.on('connection', (socket) => {
