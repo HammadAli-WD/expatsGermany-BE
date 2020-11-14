@@ -58,9 +58,15 @@ router.post("/signIn", async (req, res, next) => {
     const { token, refreshToken } = await authenticate(user);
     res.cookie("accessToken", token, {
 
+      path: "/",
+      sameSite: "none",
+      secure: false,
     })
     res.cookie("refreshToken", refreshToken, {
 
+      path: "/",
+      sameSite: "none",
+      secure: false,
     });
     if (!user) {
       const err = new Error("Not Found")
@@ -134,11 +140,16 @@ router.post("/refreshToken", async (req, res, next) => {
       const tokens = await refreshToken(oldRefreshToken);
 
       res.cookie("accessToken", tokens.token, {
-        //httpOnly: true,
-        //path: "/",
+        httpOnly: true,
+        path: "/",
+        sameSite: "none",
+        secure: false,
       });
       res.cookie("refreshToken", tokens.refreshToken, {
-        //httpOnly: true,
+        httpOnly: true,
+
+        sameSite: "none",
+        secure: false,
         path: ["/user/refreshToken", "/user/signOut"],
       });
       res.send(tokens);
