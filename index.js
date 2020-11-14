@@ -97,14 +97,15 @@ io.on('connection', (socket) => {
   })
   //send messages to all members
 
-  socket.on("sendMessage", async ({ room, message }) => {
+  socket.on("sendMessage", async ({ room, message, image }) => {
     const user = await getUser(room, socket.id)
     //save the message in collection
 
     const newMessage = new MessageModel({
       sender: user.username,
       text: message,
-      room
+      room,
+      image
     })
 
     await newMessage.save()
@@ -113,6 +114,7 @@ io.on('connection', (socket) => {
     const messageUsername = {
       sender: user.username,
       text: message,
+      image,
       createdAt: new Date()
     }
     io.to(room).emit("message", messageUsername)
