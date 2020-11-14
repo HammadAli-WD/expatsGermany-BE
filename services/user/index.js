@@ -138,8 +138,16 @@ router.post("/refreshToken", async (req, res, next) => {
     try {
       const tokens = await refreshToken(oldRefreshToken);
 
-      res.cookie("accessToken", tokens.token);
-      res.cookie("refreshToken", tokens.refreshToken);
+      res.cookie("accessToken", tokens.token, {
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true,
+      });
+      res.cookie("refreshToken", tokens.refreshToken, {
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true,
+      });
       res.send(tokens);
     } catch (error) {
       console.log(error);
