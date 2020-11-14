@@ -2,6 +2,9 @@
   "name": "expatgermany-be",
   "version": "1.0.0",
   "description": "Capstone Project at Strive School",
+  "engines": {
+    "node": "6.11.1"
+  },
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
