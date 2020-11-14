@@ -81,12 +81,12 @@ router.post("/signIn", async (req, res, next) => {
 
 router.post("/signOut", authorize, async (req, res, next) => {
   try {
-    req.user.refreshTokens = req.user.refreshTokens.filter(
+    req.user.refreshTokens = await req.user.refreshTokens.filter(
       (t) => t.token !== req.body.refreshToken
     );
-    await req.user.save();
-    res.clearCookie("accessToken");
-    res.clearCookie("refreshToken");
+    //await req.user.save();
+    await res.clearCookie("accessToken");
+    await res.clearCookie("refreshToken");
     res.send("You are succesfully Sign out from the App");
   } catch (error) {
     next(error)
