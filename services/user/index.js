@@ -199,8 +199,8 @@ router.get(
   async (req, res, next) => {
     try {
       console.log('Tokensssss', req.user.tokens)
-      const { accessToken, refreshToken } = await req.user.tokens
-      res.cookie("accessToken", accessToken, {
+      const { token, refreshToken } = await req.user.tokens
+      res.cookie("accessToken", token, {
         httpOnly: true,
         sameSite: 'none',
         secure: true,
