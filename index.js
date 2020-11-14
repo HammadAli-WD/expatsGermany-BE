@@ -38,7 +38,7 @@ const corsOptions = {
   credentials: true,
 };
 app.use(cookieParser())
-app.use(cors(corsOptions))
+app.use(cors())
 app.use(express.json())
 app.use(passport.initialize())
 app.use("/user", userRouter)
