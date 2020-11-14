@@ -199,7 +199,7 @@ router.get(
   async (req, res, next) => {
     try {
       console.log(req.user)
-      const { token, refreshToken } = req.user.tokens
+      const { token, refreshToken } = req.user
       res.cookie("accessToken", token, {
         httpOnly: true,
         sameSite: 'none',
@@ -229,7 +229,7 @@ router.get(
   async (req, res, next) => {
     try {
       console.log(req.user)
-      const { token, refreshToken } = req.user.tokens
+      const { token, refreshToken } = req.user
       res.cookie("accessToken", token, {
         httpOnly: true,
         sameSite: 'none',
