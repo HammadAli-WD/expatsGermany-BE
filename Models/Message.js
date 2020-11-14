@@ -1,11 +1,12 @@
 const { Schema } = require("mongoose");
 const mongoose = require("mongoose")
 
-const MessageSchema = new Schema ({
+const MessageSchema = new Schema({
     sender: String,
     text: String,
+    image: String,
     room: {
-        type: String,       
+        type: String,
         ref: "ChatRooms"
     }
 })
