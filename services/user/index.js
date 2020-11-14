@@ -56,18 +56,8 @@ router.post("/signIn", async (req, res, next) => {
     const user = await UserModel.findByCredentials(email, password);
 
     const { token, refreshToken } = await authenticate(user);
-    res.cookie("accessToken", token, {
-
-      path: "/",
-      sameSite: "none",
-      secure: false,
-    })
-    res.cookie("refreshToken", refreshToken, {
-
-      path: "/",
-      sameSite: "none",
-      secure: false,
-    });
+    res.cookie("accessToken", token)
+    res.cookie("refreshToken", refreshToken);
     if (!user) {
       const err = new Error("Not Found")
       err.httpStatusCode = 404
@@ -139,19 +129,8 @@ router.post("/refreshToken", async (req, res, next) => {
     try {
       const tokens = await refreshToken(oldRefreshToken);
 
-      res.cookie("accessToken", tokens.token, {
-        //httpOnly: true,
-        path: "/",
-        sameSite: "none",
-        secure: false,
-      });
-      res.cookie("refreshToken", tokens.refreshToken, {
-        //httpOnly: true,
-
-        sameSite: "none",
-        secure: false,
-        path: ["/user/refreshToken", "/user/signOut"],
-      });
+      res.cookie("accessToken", tokens.token);
+      res.cookie("refreshToken", tokens.refreshToken);
       res.send(tokens);
     } catch (error) {
       console.log(error);
