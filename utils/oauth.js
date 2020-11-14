@@ -13,6 +13,7 @@ passport.use(
       profileFields: ['id', 'email', 'gender', "first_name", "last_name", "picture.type(large)"]
 
     },
+
     async (accessToken, refreshToken, profile, done) => {
       const { email, first_name, last_name, id } = profile._json;
       const newUser = {
