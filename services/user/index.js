@@ -57,16 +57,10 @@ router.post("/signIn", async (req, res, next) => {
 
     const { token, refreshToken } = await authenticate(user);
     res.cookie("accessToken", token, {
-      httpOnly: true,
-      path: "/",
-      sameSite: "none",
-      secure: false,
+
     })
     res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      path: "/",
-      sameSite: "none",
-      secure: false,
+
     });
     if (!user) {
       const err = new Error("Not Found")
@@ -207,7 +201,7 @@ router.get(
         httpOnly: true,
         path: ["/user/refreshToken", "/user/signOut"],
       })
-      res.status(200).redirect("http://localhost:3000/rooms")
+      res.status(200).redirect(process.env.REDIRECT_CHATROOM)
     } catch (error) {
       next(error)
       console.log(error);
@@ -235,7 +229,7 @@ router.get(
         //httpOnly: true,
         path: ["/user/refreshToken", "/user/signOut"],
       })
-      res.status(200).redirect("http://localhost:3000/rooms")
+      res.status(200).redirect(process.env.REDIRECT_CHATROOM)
     } catch (error) {
       console.log(error)
       next(error)
