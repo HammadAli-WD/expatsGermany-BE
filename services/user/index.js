@@ -55,17 +55,18 @@ router.post("/signIn", async (req, res, next) => {
     const { email, password } = req.body;
     const user = await UserModel.findByCredentials(email, password);
 
-
     const { token, refreshToken } = await authenticate(user);
     res.cookie("accessToken", token, {
       httpOnly: true,
-      sameSite: 'none',
-      secure: true,
+      path: "/",
+      sameSite: "none",
+      secure: false,
     })
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      sameSite: 'none',
-      secure: true,
+      path: "/",
+      sameSite: "none",
+      secure: false,
     });
     if (!user) {
       const err = new Error("Not Found")
@@ -139,14 +140,12 @@ router.post("/refreshToken", async (req, res, next) => {
       const tokens = await refreshToken(oldRefreshToken);
 
       res.cookie("accessToken", tokens.token, {
-        httpOnly: true,
-        sameSite: 'none',
-        secure: true,
+        //httpOnly: true,
+        //path: "/",
       });
       res.cookie("refreshToken", tokens.refreshToken, {
-        httpOnly: true,
-        sameSite: 'none',
-        secure: true,
+        //httpOnly: true,
+        path: ["/user/refreshToken", "/user/signOut"],
       });
       res.send(tokens);
     } catch (error) {
@@ -198,18 +197,16 @@ router.get(
   passport.authenticate("facebook"),
   async (req, res, next) => {
     try {
-      console.log('Tokensssss', req.user.tokens)
-      const { token, refreshToken } = await req.user.tokens
+      console.log(req.user)
+      const { token, refreshToken } = req.user.tokens
       res.cookie("accessToken", token, {
         httpOnly: true,
-        sameSite: 'none',
-        secure: true,
-      });
+        path: "/"
+      })
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        sameSite: 'none',
-        secure: true,
-      });
+        path: ["/user/refreshToken", "/user/signOut"],
+      })
       res.status(200).redirect(process.env.REDIRECT_CHATROOM)
     } catch (error) {
       next(error)
@@ -228,19 +225,16 @@ router.get(
   passport.authenticate("linkedin"),
   async (req, res, next) => {
     try {
-      console.log('Tokensssss', req.user.tokens)
-
-      const { accessToken, refreshToken } = req.user.tokens
-      res.cookie("accessToken", accessToken, {
-        httpOnly: true,
-        sameSite: 'none',
-        secure: true,
-      });
+      console.log(req.user)
+      const { token, refreshToken } = req.user.tokens
+      res.cookie("accessToken", token, {
+        //httpOnly: true,
+        path: "/"
+      })
       res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        sameSite: 'none',
-        secure: true,
-      });
+        //httpOnly: true,
+        path: ["/user/refreshToken", "/user/signOut"],
+      })
       res.status(200).redirect(process.env.REDIRECT_CHATROOM)
     } catch (error) {
       console.log(error)
