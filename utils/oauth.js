@@ -59,7 +59,7 @@ passport.use(
 
     },
     async (accessToken, refreshToken, profile, done) => {
-      console.log('PROFILE', profile);
+      //console.log('PROFILE', profile);
       const newUser = {
         LinkedInId: profile.id,
         name: profile.name.givenName,
@@ -71,7 +71,7 @@ passport.use(
         password: profile.id,
         refreshTokens: [],
       }
-      console.log('New user-', newUser)
+      //console.log('New user-', newUser)
       try {
         const user = await UserModel.findOne({ LinkedInId: profile.id })
         if (user) {
