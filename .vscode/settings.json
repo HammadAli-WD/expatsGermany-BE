@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/ffeaa8ba-41ef-4ccd-b613-0088702b0695/resourceGroups/API-Expat/providers/Microsoft.Web/sites/APIExpats",
+    "appService.deploySubpath": "."
+}
