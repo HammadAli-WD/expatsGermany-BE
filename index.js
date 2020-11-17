@@ -24,7 +24,7 @@ const cookieParser = require("cookie-parser");
 const listEndPoints = require("express-list-endpoints");
 const { userEntry, getUsersInRoom, getUser, removeUser } = require("./utils/userRoom");
 const MessageModel = require("./Models/Message");
-const port = process.env.PORT
+const port = process.env.PORT || 3005
 
 const whitelist = ["http://localhost:3000"];
 const corsOptions = {
