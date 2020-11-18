@@ -26,7 +26,7 @@ const { userEntry, getUsersInRoom, getUser, removeUser } = require("./utils/user
 const MessageModel = require("./Models/Message");
 const port = process.env.PORT || 3005
 
-const whitelist = ["http://localhost:3000"];
+const whitelist = ["https://expatsingermany.herokuapp.com"];
 const corsOptions = {
   origin: (origin, callback) => {
     if (whitelist.indexOf(origin) !== -1 || !origin) {
