@@ -40,9 +40,36 @@ router.get("/me", authorize, (req, res, next) => {
   }
 })
 
-router.post("/Register", async (req, res, next) => {
+router.post("/Register", upload.single("image"), async (req, res, next) => {
   try {
-    const newUser = new UserModel(req.body);
+    if (req.file) {
+      const imagesPath = path.join(__dirname, "/images");
+      await fs.writeFile(
+        path.join(
+          imagesPath,
+          req.body.username + "." + req.file.originalname.split(".").pop()
+        ),
+        req.file.buffer
+      );
+      var obj = {
+        ...req.body,
+        image: fs.readFileSync(
+          path.join(
+            __dirname +
+            "/images/" +
+            req.body.username +
+            "." +
+            req.file.originalname.split(".").pop()
+          )
+        ),
+      };
+    } else {
+      var obj = {
+        ...req.body,
+        image: fs.readFileSync(path.join(__dirname, "./images/default.jpg")),
+      };
+    }
+    const newUser = new UserModel(obj);
     const { _id } = await newUser.save()
     res.status(201).send(_id)
   } catch (error) {
