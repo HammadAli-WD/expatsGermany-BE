@@ -68,19 +68,18 @@ passport.use(
         username: profile.name.familyName,
         image: profile.photos[0].value,
         //role: "user",
-        password: profile.id,
-        refreshTokens: [],
+        password: profile.id
       }
       //console.log('New user-', newUser)
       try {
         const user = await UserModel.findOne({ LinkedInId: profile.id })
         if (user) {
-          const tokens = await authenticate(user)
-          done(null, { user, tokens })
+          //const tokens = await authenticate(user)
+          done(null, { user })
         } else {
           let createdUser = await UserModel.create(newUser)
-          const tokens = await authenticate(createdUser)
-          done(null, { user, tokens })
+          //const tokens = await authenticate(createdUser)
+          done(null, { user })
         }
       } catch (error) {
         console.log(error)
