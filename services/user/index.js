@@ -219,21 +219,21 @@ router.get(
   async (req, res, next) => {
     try {
       console.log('User', req.user)
-      const { token, refreshToken } = await req.user.tokens
-      console.log('Tokens', token, refreshToken)
-      res.cookie("accessToken", token, {
+      //const { token, refreshToken } = await req.user.tokens
+      //console.log('Tokens', token, refreshToken)
+      //res.cookie("accessToken", token, {
         //httpOnly: true,
-        path: "/"
-      })
-      res.cookie("refreshToken", refreshToken, {
+        //path: "/"
+     // })
+     // res.cookie("refreshToken", refreshToken, {
         //httpOnly: true,
-        path: ["/user/refreshToken", "/user/signOut"],
-      })
+        //path: ["/user/refreshToken", "/user/signOut"],
+     // })
       res.status(200).redirect(process.env.REDIRECT_CHATROOM)
     } catch (error) {
       console.log(error)
       next(error)
-      console.log(error);
+      
 
     }
   }
