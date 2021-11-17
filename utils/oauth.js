@@ -69,7 +69,6 @@ passport.use(
         image: profile.photos[0].value,
         //role: "user",
         password: profile.id,
-        refreshTokens: [],
       }
       console.log('New user-', newUser)
       try {
