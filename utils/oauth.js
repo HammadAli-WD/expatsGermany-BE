@@ -59,7 +59,7 @@ passport.use(
 
     },
     async (accessToken, refreshToken, profile, done) => {
-      //console.log('PROFILE', profile);
+      console.log('PROFILE', profile);
       const newUser = {
         LinkedInId: profile.id,
         name: profile.name.givenName,
@@ -68,18 +68,19 @@ passport.use(
         username: profile.name.familyName,
         image: profile.photos[0].value,
         //role: "user",
-        password: profile.id
+        password: profile.id,
+        refreshTokens: [],
       }
-      //console.log('New user-', newUser)
+      console.log('New user-', newUser)
       try {
         const user = await UserModel.findOne({ LinkedInId: profile.id })
         if (user) {
-          //const tokens = await authenticate(user)
-          done(null, { user })
+          const tokens = await authenticate(user)
+          done(null, { user, tokens })
         } else {
           let createdUser = await UserModel.create(newUser)
-          //const tokens = await authenticate(createdUser)
-          done(null, { user })
+          const tokens = await authenticate(createdUser)
+          done(null, { user, tokens })
         }
       } catch (error) {
         console.log(error)

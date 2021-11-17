@@ -16,7 +16,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-router.get("/", authorize, async (req, res, next) => {
+router.get("/", async (req, res, next) => {
   try {
     const users = await UserModel.find();
     if (users.length < 1) {
@@ -31,7 +31,7 @@ router.get("/", authorize, async (req, res, next) => {
   }
 })
 
-router.get("/me", authorize, (req, res, next) => {
+router.get("/me", (req, res, next) => {
   try {
     res.send(req.user)
   } catch (error) {
@@ -40,35 +40,13 @@ router.get("/me", authorize, (req, res, next) => {
   }
 })
 
-router.post("/Register", upload.single("image"), async (req, res, next) => {
+router.post("/Register", async (req, res, next) => {
   try {
-    if (req.file) {
-      const imagesPath = path.join(__dirname, "/images");
-      await fs.writeFile(
-        path.join(
-          imagesPath,
-          req.body.username + "." + req.file.originalname.split(".").pop()
-        ),
-        req.file.buffer
-      );
+    
       var obj = {
-        ...req.body,
-        image: fs.readFileSync(
-          path.join(
-            __dirname +
-            "/images/" +
-            req.body.username +
-            "." +
-            req.file.originalname.split(".").pop()
-          )
-        ),
+        ...req.body,       
       };
-    } else {
-      var obj = {
-        ...req.body,
-        image: fs.readFileSync(path.join(__dirname, "./images/default.jpg")),
-      };
-    }
+    
     const newUser = new UserModel(obj);
     const { _id } = await newUser.save()
     res.status(201).send(_id)
@@ -82,25 +60,13 @@ router.post("/signIn", async (req, res, next) => {
     const { email, password } = req.body;
     const user = await UserModel.findByCredentials(email, password);
 
-    const { token, refreshToken } = await authenticate(user);
-    res.cookie("accessToken", token, {
-      httpOnly: true,
-      path: "/",
-      sameSite: "none",
-      secure: false,
-    })
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      path: "/",
-      sameSite: "none",
-      secure: false,
-    });
+   
     if (!user) {
       const err = new Error("Not Found")
       err.httpStatusCode = 404
       throw err
     }
-    res.status(200).send({ accessToken: token, refreshToken });
+    res.status(200).send(user);
   } catch (error) {
     next(error)
   }
@@ -252,21 +218,22 @@ router.get(
   passport.authenticate("linkedin"),
   async (req, res, next) => {
     try {
-      console.log(req.user)
-      //const { token, refreshToken } = req.user.tokens
-      //res.cookie("accessToken", token, {
+      console.log('User', req.user)
+      const { token, refreshToken } = await req.user.tokens
+      console.log('Tokens', token, refreshToken)
+      res.cookie("accessToken", token, {
         //httpOnly: true,
-       // path: "/"
-      //})
-     // res.cookie("refreshToken", refreshToken, {
+        path: "/"
+      })
+      res.cookie("refreshToken", refreshToken, {
         //httpOnly: true,
-        //path: ["/user/refreshToken", "/user/signOut"],
-      //})
+        path: ["/user/refreshToken", "/user/signOut"],
+      })
       res.status(200).redirect(process.env.REDIRECT_CHATROOM)
     } catch (error) {
       console.log(error)
       next(error)
-      //console.log(error);
+      console.log(error);
 
     }
   }
