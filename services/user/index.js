@@ -31,7 +31,7 @@ router.get("/", authorize, async (req, res, next) => {
   }
 })
 
-router.get("/me", authorize, (req, res, next) => {
+router.get("/me", (req, res, next) => {
   try {
     res.send(req.user)
   } catch (error) {
