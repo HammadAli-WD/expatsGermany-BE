@@ -10,7 +10,7 @@ router.get('/germanyCases', (req, res, next) =>{
         fetch(url + '/summary')
          .then(res => res.json())
          .then(data => 
-            res.send(data.Countries[64]))
+            res.send(data.Countries[65]))
     } catch (error) {
       next(error)
       console.log(error);
